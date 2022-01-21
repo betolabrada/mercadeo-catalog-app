@@ -107,12 +107,19 @@ export default function ProductDialog({ product, addToCart }: { product: Product
                           Product information
                         </h3>
 
-                        <p className="text-2xl text-gray-900">{product.price}</p>  
+                        <p className="text-2xl text-gray-900">$ {product.price}</p>  
                         <p className="text-xl text-gray-800">Cant. {quantity}</p>
-                        <button 
-                          className="bg-green-600 rounded-full text-white px-3 font-medium hover:bg-green-700"
-                          onClick={() => setQuantity(quantity + 1)}
-                          >+</button>
+                        <div className="flex gap-x-2">
+                          <button
+                            disabled={quantity == 0}
+                            className="bg-red-600 rounded-full text-white px-3 font-medium hover:bg-red-700 disabled:bg-gray-400"
+                            onClick={() => setQuantity(quantity - 1)}
+                            >-</button>
+                          <button 
+                            className="bg-green-600 rounded-full text-white px-3 font-medium hover:bg-green-700"
+                            onClick={() => setQuantity(quantity + 1)}
+                            >+</button>
+                        </div>
                                              
                       </section>
 
