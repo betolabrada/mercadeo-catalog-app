@@ -73,7 +73,7 @@ export default function Home() {
 
   const removeProductFromCart = (product: ProductCart) => {
     cart.removeFromCart(product);
-    setCart(cart);
+    setCart(new CartModel(cart.products));
   }
 
   return (

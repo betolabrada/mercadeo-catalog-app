@@ -142,6 +142,5 @@ export default function ProductDialog({ product, addToCart }: { product: Product
         </Dialog>
       </Transition.Root>
     </>
-
   )
 }
