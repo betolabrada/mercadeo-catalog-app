@@ -186,11 +186,11 @@ export default function Home() {
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Cart removeFromCart={removeProductFromCart} cart={cart}  open={cartOpen} setOpen={setCartOpen} />
             <div className="relative z-10 flex items-baseline justify-between pt-24 pb-6 border-b border-gray-200">
-              <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">Productos Mercadeo</h1>
+              <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 hidden md:block">Productos Mercadeo</h1>
 
-              <div className="flex items-center">
-                <div className="mt-1 flex rounded-md shadow-sm">
-                  <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+              <div className="w-full md:w-96 flex items-center">
+                <div className="mt-1 flex-auto flex rounded-md shadow-sm">
+                  <span className="inline-flex items-center px-3 py-2 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                     <SearchIcon className="h-4 w-4" aria-hidden="true" />
                   </span>
                   <input
@@ -199,18 +199,18 @@ export default function Home() {
                     type="text"
                     name="Buscar"
                     id="buscar"
-                    className="border focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
+                    className="border px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
                     placeholder="Buscar"
                   />
                 </div>
 
-                <button onClick={() => setCartOpen(true)} type="button" className="p-2 -m-2 ml-5 sm:ml-7 text-gray-400 hover:text-gray-500">
+                <button onClick={() => setCartOpen(true)} type="button" className="flex-initial p-2 -m-2 ml-5 sm:ml-7 text-gray-400 hover:text-gray-500">
                   <span className="sr-only">View grid</span>
                   <ShoppingCartIcon className="w-7 h-7" aria-hidden="true" />
                 </button>
                 <button
                   type="button"
-                  className="p-2 -m-2 ml-4 sm:ml-6 text-gray-400 hover:text-gray-500 lg:hidden"
+                  className="p-2 -m-2 ml-4 sm:ml-6 text-gray-400 hover:text-gray-500 lg:hidden flex-initial"
                   onClick={() => setMobileFiltersOpen(true)}
                 >
                   <span className="sr-only">Filters</span>
