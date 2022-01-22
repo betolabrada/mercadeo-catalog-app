@@ -10,19 +10,6 @@ import CartModel from '../models/Cart'
 import Product from '../models/Product'
 import ProductCart from '../models/ProductCart'
 
-
-const products: Product[] = [
-  {
-    id: 1,
-    name: 'Earthen Bottle',
-    href: '#',
-    price: 48,
-    imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-01.jpg',
-    imageAlt: 'Tall slender porcelain bottle with natural clay textured body and cork stopper.',
-    contentDescription: '12 Piezas De 1 kg'
-  },
-]
-
 const subCategories = [
   { name: 'Sales Del Valle', href: '#' },
   { name: 'Loltun', href: '#' },
@@ -60,7 +47,11 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Home() {
+export interface Props {
+  products: Product[];
+}
+
+const Home: React.FC<Props> = ({ products }) => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -296,4 +287,17 @@ export default function Home() {
       </div>
     </>
   )
+}
+
+export default Home
+
+export async function getStaticProps() {
+  const res = await fetch('https://catalogo-mercadeo-default-rtdb.firebaseio.com/productos.json')
+  const products = await res.json()
+
+  return {
+    props: {
+      products
+    }
+  }
 }
