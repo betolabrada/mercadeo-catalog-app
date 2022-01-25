@@ -65,11 +65,11 @@ export default function Cart({ cart, removeFromCart, open, setOpen }: { cart: Ca
                                 <div>
                                   <div className="flex justify-between text-base font-medium text-gray-900">
                                     <h3>
-                                      <a href={productCart.product.href}>{productCart.product.name}</a>
+                                      <a href={productCart.product.href}>{productCart.product.nombre}</a>
                                     </h3>
-                                    <p className="ml-4">{productCart.product.price * productCart.quantity}</p>
+                                    <p className="ml-4">{productCart.product.precio * productCart.quantity}</p>
                                   </div>
-                                  <p className="mt-1 text-sm text-gray-500">{productCart.product.contentDescription}</p>
+                                  <p className="mt-1 text-sm text-gray-500">{productCart.product.presentacion}</p>
                                 </div>
                                 <div className="flex-1 flex items-end justify-between text-sm">
                                   <p className="text-gray-500">Cant. {productCart.quantity}</p>

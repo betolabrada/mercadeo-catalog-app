@@ -2,7 +2,7 @@ export default class Product {
     constructor(
         public id: number,
         public nombre: string,
-        public precio: string,
+        public precio: number,
         public imageSrc: string,
         public imageAlt: string,
         public presentacion: string,

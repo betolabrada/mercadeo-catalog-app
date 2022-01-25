@@ -2,22 +2,13 @@ import { Transition, Dialog, Disclosure } from '@headlessui/react'
 import { XIcon, MinusSmIcon, PlusSmIcon, ShoppingCartIcon, FilterIcon } from '@heroicons/react/outline'
 import { SearchIcon } from '@heroicons/react/solid'
 import Head from 'next/head'
-import { Fragment, useState } from 'react'
+import { ChangeEvent, FormEventHandler, Fragment, useState } from 'react'
 import Cart from '../components/Cart'
 import ProductGrid from '../components/ProductGrid'
 
 import CartModel from '../models/Cart'
 import Product from '../models/Product'
 import ProductCart from '../models/ProductCart'
-
-const subCategories = [
-  { name: 'Sales Del Valle', href: '#' },
-  { name: 'Loltun', href: '#' },
-  { name: 'Abarrotes', href: '#' },
-  { name: 'Silverline', href: '#' },
-  { name: 'Argos', href: '#' },
-  { name: 'SaborMex', href: '#' },
-]
 
 const filters = [
   {
@@ -26,10 +17,10 @@ const filters = [
     options: [
       { value: 'Argos', label: 'Argos', checked: false },
       { value: 'Loltun', label: 'Loltun', checked: false },
-      { value: 'Silverline', label: 'Silverline', checked: true },
-      { value: 'Sales Del Valle', label: 'Sales Del Valle', checked: false },
-      { value: 'Clemente Jaques', label: 'Clemente Jaques', checked: false },
-      { value: 'Tajin', label: 'Tajin', checked: false },
+      { value: 'Silverline', label: 'Silverline', checked: false },
+      { value: 'sales-del-valle', label: 'Sales Del Valle', checked: false },
+      { value: 'clemente-jaques', label: 'Clemente Jaques', checked: false },
+      { value: 'tajin', label: 'Tajin', checked: false },
     ],
   },
   {
@@ -52,19 +43,49 @@ export interface Props {
 }
 
 const Home: React.FC<Props> = ({ products }) => {
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-  const [cartOpen, setCartOpen] = useState(false)
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [cart, setCart] = useState(new CartModel([]))
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false)
+  const [cartOpen, setCartOpen] = useState<boolean>(false)
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false)
+  const [cart, setCart] = useState<CartModel>(new CartModel([]))
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([])
+  const [searchTerm, setSearchTerm] = useState<string>('')
+
+  const toggleFilter = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = e.currentTarget.value
+    const checked = e.currentTarget.checked
+
+    if (checked && selectedFilters.indexOf(val) === -1) {
+      setSelectedFilters(selectedFilters.concat([val]))      
+    } else {
+      setSelectedFilters(selectedFilters.filter(x => x != val))
+    }
+  }
+
+  const searchProduct = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.currentTarget.value)    
+  }
 
   const addProductToCart = (product: Product, quantity: number) => {
     cart.addToCart(new ProductCart(product, quantity))
-    setCartOpen(true)
   }
 
   const removeProductFromCart = (product: ProductCart) => {
     cart.removeFromCart(product);
     setCart(new CartModel(cart.products));
+  }
+
+  const textFilter = ({ nombre, marca, categoria }: Product): boolean => {
+    const searchMatches: string = (`${nombre} ${marca} ${categoria}`).toLowerCase()    
+    return searchMatches.indexOf(searchTerm.toLowerCase()) !== -1
+  }
+
+  const marcaFilter = (product: Product) => selectedFilters.includes(product.marca)
+
+  const displayContent = (): Product[] => {
+    const noFilter = () => true
+    return products
+      .filter(selectedFilters.length > 0 ? marcaFilter : noFilter)
+      .filter(searchTerm.length > 0 ? textFilter : noFilter)
   }
 
   return (
@@ -115,17 +136,6 @@ const Home: React.FC<Props> = ({ products }) => {
 
                   {/* Filters */}
                   <form className="mt-4 border-t border-gray-200">
-                    <h3 className="sr-only">Categorías</h3>
-                    <ul role="list" className="font-medium text-gray-900 px-2 py-3">
-                      {subCategories.map((category) => (
-                        <li key={category.name}>
-                          <a href={category.href} className="block px-2 py-3">
-                            {category.name}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-
                     {filters.map((section) => (
                       <Disclosure as="div" key={section.id} className="border-t border-gray-200 px-4 py-6">
                         {({ open }) => (
@@ -174,8 +184,9 @@ const Home: React.FC<Props> = ({ products }) => {
             </Dialog>
           </Transition.Root>
 
+          <Cart removeFromCart={removeProductFromCart} cart={cart}  open={cartOpen} setOpen={setCartOpen} />
+
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Cart removeFromCart={removeProductFromCart} cart={cart}  open={cartOpen} setOpen={setCartOpen} />
             <div className="relative z-10 flex items-baseline justify-between pt-24 pb-6 border-b border-gray-200">
               <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 hidden md:block">Productos Mercadeo</h1>
 
@@ -192,6 +203,7 @@ const Home: React.FC<Props> = ({ products }) => {
                     id="buscar"
                     className="border px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300"
                     placeholder="Buscar"
+                    onChange={searchProduct}
                   />
                 </div>
 
@@ -218,14 +230,6 @@ const Home: React.FC<Props> = ({ products }) => {
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-x-8 gap-y-10">
                 {/* Filters */}
                 <form className="hidden lg:block">
-                  <h3 className="sr-only">Categories</h3>
-                  <ul role="list" className="text-sm font-medium text-gray-900 space-y-4 pb-6 border-b border-gray-200">
-                    {subCategories.map((category) => (
-                      <li key={category.name}>
-                        <a href={category.href}>{category.name}</a>
-                      </li>
-                    ))}
-                  </ul>
 
                   {filters.map((section) => (
                     <Disclosure as="div" key={section.id} className="border-b border-gray-200 py-6">
@@ -254,6 +258,7 @@ const Home: React.FC<Props> = ({ products }) => {
                                     type="checkbox"
                                     defaultChecked={option.checked}
                                     className="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
+                                    onChange={toggleFilter}
                                   />
                                   <label
                                     htmlFor={`filter-${section.id}-${optionIdx}`}
@@ -275,7 +280,7 @@ const Home: React.FC<Props> = ({ products }) => {
                 <div className="lg:col-span-3">
                   {/* Replace with your content */}
                   <ProductGrid 
-                    products={products}
+                    products={displayContent()}
                     addToCart={addProductToCart}
                     />
                   {/* /End replace */}

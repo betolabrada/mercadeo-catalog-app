@@ -28,7 +28,7 @@ export default class Cart {
 
     public getTotalPrice() {
         return this.products.length <= 0 ? 0 : this.products
-            .map(x => x.product.price * x.quantity)
+            .map(x => x.product.precio * x.quantity)
             .reduce((prev, cur) => prev + cur);
     }
 }
