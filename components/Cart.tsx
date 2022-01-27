@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import CartModel from '../models/Cart'
+import formatter from '../utils/formatter'
 
 export default function Cart({ cart, removeFromCart, open, setOpen }: { cart: CartModel, removeFromCart: any, open: boolean, setOpen: any }) {
 
@@ -67,7 +68,7 @@ export default function Cart({ cart, removeFromCart, open, setOpen }: { cart: Ca
                                     <h3>
                                       <a href={productCart.product.href}>{productCart.product.nombre}</a>
                                     </h3>
-                                    <p className="ml-4">{productCart.product.precio * productCart.quantity}</p>
+                                    <p className="ml-4">{formatter.format(productCart.product.precio * productCart.quantity)}</p>
                                   </div>
                                   <p className="mt-1 text-sm text-gray-500">{productCart.product.presentacion}</p>
                                 </div>
@@ -95,7 +96,7 @@ export default function Cart({ cart, removeFromCart, open, setOpen }: { cart: Ca
                   <div className="border-t border-gray-200 py-6 px-4 sm:px-6">
                     <div className="flex justify-between text-base font-medium text-gray-900">
                       <p>Subtotal</p>
-                      <p>{cart.getTotalPrice()}</p>
+                      <p>{formatter.format(cart.getTotalPrice())}</p>
                     </div>
                     <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                     <div className="mt-6">

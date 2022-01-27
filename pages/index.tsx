@@ -15,16 +15,16 @@ const filters = [
     id: 'marca',
     name: 'Marca',
     options: [
-      { value: 'Argos', label: 'Argos', checked: false },
-      { value: 'Loltun', label: 'Loltun', checked: false },
-      { value: 'Silverline', label: 'Silverline', checked: false },
+      { value: 'argos', label: 'Argos', checked: false },
+      { value: 'loltun', label: 'Loltun', checked: false },
+      { value: 'silverline', label: 'Silverline', checked: false },
       { value: 'sales-del-valle', label: 'Sales Del Valle', checked: false },
       { value: 'clemente-jaques', label: 'Clemente Jaques', checked: false },
-      { value: 'tajin', label: 'Tajin', checked: false },
+      { value: 'tajin', label: 'Tajín', checked: false },
     ],
   },
   {
-    id: 'category',
+    id: 'categoria',
     name: 'Categoría',
     options: [
       { value: 'abarrotes', label: 'Abarrotes', checked: false },
@@ -32,6 +32,18 @@ const filters = [
     ],
   },
 ]
+
+function sanitize(str: string) {
+  return str
+    .normalize('NFD')
+    .replace(/([\u0300-\u036f]|[^0-9a-zA-Z])/g, '')
+    .toLocaleLowerCase()
+}
+
+interface SelectedFilters {
+  marca: string[]
+  categoria: string[]
+}
 
 
 function classNames(...classes: string[]) {
@@ -45,19 +57,34 @@ export interface Props {
 const Home: React.FC<Props> = ({ products }) => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState<boolean>(false)
   const [cartOpen, setCartOpen] = useState<boolean>(false)
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false)
   const [cart, setCart] = useState<CartModel>(new CartModel([]))
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([])
+  const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({
+    categoria: [],
+    marca: []
+  })
   const [searchTerm, setSearchTerm] = useState<string>('')
 
-  const toggleFilter = (e: ChangeEvent<HTMLInputElement>) => {
+  const toggleFilter = (e: ChangeEvent<HTMLInputElement>, key: string) => {
     const val = e.currentTarget.value
     const checked = e.currentTarget.checked
 
-    if (checked && selectedFilters.indexOf(val) === -1) {
-      setSelectedFilters(selectedFilters.concat([val]))      
-    } else {
-      setSelectedFilters(selectedFilters.filter(x => x != val))
+    if (key === 'marca') {
+      if (checked && selectedFilters.marca.indexOf(val) === -1) {
+        const marca = selectedFilters.marca.concat([sanitize(val)])
+        setSelectedFilters({ ...selectedFilters, marca })      
+      } else {
+        const marca = selectedFilters.marca.filter(x => sanitize(x) != sanitize(val))
+        setSelectedFilters({ ...selectedFilters, marca })
+      }
+    }
+    else if (key === 'categoria') {
+      if (checked && selectedFilters.categoria.indexOf(val) === -1) {
+        const categoria = selectedFilters.categoria.concat([sanitize(val)])
+        setSelectedFilters({ ...selectedFilters, categoria })      
+      } else {
+        const categoria = selectedFilters.categoria.filter(x => sanitize(x) != sanitize(val))
+        setSelectedFilters({ ...selectedFilters, categoria })
+      }
     }
   }
 
@@ -75,16 +102,22 @@ const Home: React.FC<Props> = ({ products }) => {
   }
 
   const textFilter = ({ nombre, marca, categoria }: Product): boolean => {
-    const searchMatches: string = (`${nombre} ${marca} ${categoria}`).toLowerCase()    
-    return searchMatches.indexOf(searchTerm.toLowerCase()) !== -1
+    const searchMatches: string = 
+      (`${sanitize(nombre)} ${sanitize(marca)} ${sanitize(categoria)}`)  
+    return searchMatches.indexOf(sanitize(searchTerm)) !== -1
   }
 
-  const marcaFilter = (product: Product) => selectedFilters.includes(product.marca)
+  const marcaFilter = (product: Product) => 
+    selectedFilters.marca.includes(sanitize(product.marca))
+
+  const categoriaFilter = (product: Product) => 
+    selectedFilters.categoria.includes(sanitize(product.categoria))
 
   const displayContent = (): Product[] => {
     const noFilter = () => true
     return products
-      .filter(selectedFilters.length > 0 ? marcaFilter : noFilter)
+      .filter(selectedFilters.marca.length > 0 ? marcaFilter : noFilter)
+      .filter(selectedFilters.categoria.length > 0 ? categoriaFilter : noFilter)
       .filter(searchTerm.length > 0 ? textFilter : noFilter)
   }
 
@@ -163,6 +196,7 @@ const Home: React.FC<Props> = ({ products }) => {
                                       type="checkbox"
                                       defaultChecked={option.checked}
                                       className="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
+                                      onChange={(e) => toggleFilter(e, section.id)}
                                     />
                                     <label
                                       htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
@@ -258,7 +292,7 @@ const Home: React.FC<Props> = ({ products }) => {
                                     type="checkbox"
                                     defaultChecked={option.checked}
                                     className="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
-                                    onChange={toggleFilter}
+                                    onChange={(e) => toggleFilter(e, section.id)}
                                   />
                                   <label
                                     htmlFor={`filter-${section.id}-${optionIdx}`}

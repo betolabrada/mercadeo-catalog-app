@@ -3,31 +3,7 @@ import { Dialog, RadioGroup, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import { StarIcon } from '@heroicons/react/solid'
 import Product from '../models/Product'
-
-// const product = {
-//   name: 'Basic Tee 6-Pack ',
-//   price: '$192',
-//   rating: 3.9,
-//   reviewCount: 117,
-//   href: '#',
-//   imageSrc: 'https://tailwindui.com/img/ecommerce-images/product-quick-preview-02-detail.jpg',
-//   imageAlt: 'Two each of gray, white, and black shirts arranged on table.',
-//   colors: [
-//     { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
-//     { name: 'Gray', class: 'bg-gray-200', selectedClass: 'ring-gray-400' },
-//     { name: 'Black', class: 'bg-gray-900', selectedClass: 'ring-gray-900' },
-//   ],
-//   sizes: [
-//     { name: 'XXS', inStock: true },
-//     { name: 'XS', inStock: true },
-//     { name: 'S', inStock: true },
-//     { name: 'M', inStock: true },
-//     { name: 'L', inStock: true },
-//     { name: 'XL', inStock: true },
-//     { name: 'XXL', inStock: true },
-//     { name: 'XXXL', inStock: false },
-//   ],
-// }
+import formatter from '../utils/formatter'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -36,6 +12,11 @@ function classNames(...classes: string[]) {
 export default function ProductDialog({ product, addToCart }: { product: Product, addToCart: any }) {
   const [open, setOpen] = useState(false)
   const [quantity, setQuantity] = useState(0)
+
+  const precio = (): string => {
+    const p = quantity <= 0 ? product.precio : product.precio * quantity
+    return formatter.format(p)
+  }
 
   const handleBtnClick = () => {
     addToCart(product, quantity)
@@ -53,7 +34,8 @@ export default function ProductDialog({ product, addToCart }: { product: Product
           />
         </div>
         <h3 className="mt-4 text-sm text-gray-700">{product.nombre}</h3>
-        <p className="mt-1 text-lg font-medium text-gray-900">{product.precio}</p>
+        <p className="mt-1 text-sm font-medium text-gray-500">{product.marca} - {product.presentacion}</p>
+        <p className="mt-1 text-lg font-medium text-gray-900">{formatter.format(product.precio)}</p>
       </a>
 
       <Transition.Root show={open} as={Fragment}>
@@ -107,7 +89,7 @@ export default function ProductDialog({ product, addToCart }: { product: Product
                           Product information
                         </h3>
 
-                        <p className="text-2xl text-gray-900">{product.precio}</p>  
+                        <p className="text-2xl text-gray-900">{precio()}</p>  
                         <p className="text-xl text-gray-800">Cant. {quantity}</p>
                         <div className="flex gap-x-2">
                           <button
