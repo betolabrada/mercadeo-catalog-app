@@ -98,24 +98,14 @@ export default function Cart({ cart, removeFromCart, open, setOpen }: { cart: Ca
                       <p>Subtotal</p>
                       <p>{formatter.format(cart.getTotalPrice())}</p>
                     </div>
-                    <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
-                    <div className="mt-6">
-                      <a
-                        href="#"
-                        className="flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-                      >
-                        Checkout
-                      </a>
-                    </div>
                     <div className="mt-6 flex justify-center text-sm text-center text-gray-500">
                       <p>
-                        or{' '}
                         <button
                           type="button"
                           className="text-indigo-600 font-medium hover:text-indigo-500"
                           onClick={() => setOpen(false)}
                         >
-                          Continue Shopping<span aria-hidden="true"> &rarr;</span>
+                          Continuar Comprando<span aria-hidden="true"> &rarr;</span>
                         </button>
                       </p>
                     </div>

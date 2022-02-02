@@ -28,7 +28,7 @@ export default function ProductDialog({ product, addToCart }: { product: Product
       <a key={product.id} href="#" className="group" onClick={() => setOpen(true)}>
         <div className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
           <img
-            src={product.imageSrc}
+            src={product.imageSrc || '/images/NO_PHOTO.png'}
             alt={product.imageAlt}
             className="w-full h-full object-center object-cover group-hover:opacity-75"
           />
